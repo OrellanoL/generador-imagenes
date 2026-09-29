@@ -1,260 +1,193 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generador de Ofertas Masivo</title>
-    <style>
-        :root {
-            --bg-gray: #f4f4f5;
-            --border-color: #e4e4e7;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: system-ui, -apple-system, sans-serif;
-        }
-
-        body {
-            background-color: var(--bg-gray);
-            padding: 20px;
-            color: #18181b;
-        }
-
-        .card {
-            max-width: 1000px;
-            margin: 0 auto;
-            background: white;
-            padding: 24px;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        }
-
-        h1 {
-            font-size: 1.5rem;
-            margin-bottom: 8px;
-        }
-
-        .subtitle {
-            color: #71717a;
-            font-size: 0.9rem;
-            margin-bottom: 20px;
-        }
-
-        .controls-row {
-            display: flex;
-            gap: 16px;
-            margin-bottom: 20px;
-            background: #f8fafc;
-            padding: 16px;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-        }
-
-        .field-group {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        label {
-            font-size: 0.85rem;
-            font-weight: 600;
-        }
-
-        input {
-            padding: 8px 12px;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            font-size: 0.95rem;
-        }
-
-        .grid-inputs {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-            gap: 12px;
-            max-height: 350px;
-            overflow-y: auto;
-            padding: 10px;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            margin-bottom: 20px;
-        }
-
-        .item-input {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        .item-input label {
-            font-size: 0.8rem;
-            color: #4b5563;
-        }
-
-        .buttons-row {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-
-        button {
-            padding: 12px 24px;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            border: none;
-            font-size: 0.95rem;
-        }
-
-        .btn-calc {
-            background: #000;
-            color: white;
-        }
-
-        .btn-print {
-            background: #e4e4e7;
-            color: #18181b;
-        }
-
-        .preview-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 16px;
-            margin-top: 20px;
-        }
-
-        .preview-grid img {
-            width: 100%;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-        }
-
-        @media print {
-            .no-print { display: none !important; }
-            body { padding: 0; background: white; }
-            
-            @page {
-                size: A4 portrait;
-                margin: 0;
-            }
-
-            .preview-grid {
-                display: block;
-            }
-
-            .preview-grid img {
-                page-break-after: always;
-                width: 100vw;
-                height: 100vh;
-                object-fit: contain;
-                border: none;
-            }
-        }
-    </style>
-</head>
-<body>
-
-    <div class="card no-print">
-        <h1>🏷️ Generador Masivo de Ofertas</h1>
-        <p class="subtitle">Ingresá los Precios Regulares. El valor con descuento y los avisos se actualizarán automáticamente.</p>
-
-        <div class="controls-row">
-            <div class="field-group">
-                <label>Descuento a aplicar (%):</label>
-                <input type="number" id="descuentoInput" value="10" style="width: 100px;">
-            </div>
-        </div>
-
-        <label style="margin-bottom: 8px; display: block;">Precios Regulares por Producto:</label>
-        <div class="grid-inputs" id="contenedorInputs"></div>
-
-        <div class="buttons-row">
-            <button class="btn-calc" onclick="generarTodasLasOfertas()">⚡ Generar Ofertas</button>
-            <button class="btn-print" onclick="window.print()">🖨️ Imprimir / PDF</button>
-        </div>
-
-        <div class="preview-grid" id="previewGrid"></div>
-    </div>
-
-    <script>
-        // CONFIGURACIÓN AJUSTADA A TU REPOSITORIO DE GITHUB:
-        const USUARIO_GITHUB = "OrellanoL"; 
+<script>
+        const USUARIO_GITHUB = "OrellanoL";
         const REPOSITORIO_GITHUB = "generador-imagenes";
 
-        // Genera la lista de tus 30 diapositivas
-        const productos = [];
-        for (let i = 1; i <= 30; i++) {
+        // Rutas directas de los logos
+        const URL_MP_LOGO = `https://raw.githubusercontent.com/${USUARIO_GITHUB}/${REPOSITORIO_GITHUB}/main/mplogo.png`;
+        const URL_CARREFOUR_LOGO = `https://raw.githubusercontent.com/${USUARIO_GITHUB}/${REPOSITORIO_GITHUB}/main/carrefourexpresslogo.webp`;
+
+        // Productos configurados
+        const productos = [
+            {
+                id: 1,
+                titulo: "PAPEL HIGIÉNICO",
+                descripcion: "HOJA SIMPLE X 4 U. X 30 MT! \"HIGIENOL\"",
+                aclaracion: "LLEVANDO 2 UNIDADES C/U",
+                fotoUrl: `https://raw.githubusercontent.com/${USUARIO_GITHUB}/${REPOSITORIO_GITHUB}/main/Higienol.jpg`,
+                precioDefault: 2750
+            },
+            {
+                id: 2,
+                titulo: "GALLETITAS",
+                descripcion: "SANDWICH X 3 U X 108 G \"TRAVIATA\"",
+                aclaracion: "",
+                fotoUrl: `https://raw.githubusercontent.com/${USUARIO_GITHUB}/${REPOSITORIO_GITHUB}/main/traviata.webp`,
+                precioDefault: 2389
+            },
+            {
+                id: 3,
+                titulo: "ARROZ LARGO",
+                descripcion: "FINO 00000 X 1 KG \"CRUCERO\"",
+                aclaracion: "",
+                fotoUrl: `https://raw.githubusercontent.com/${USUARIO_GITHUB}/${REPOSITORIO_GITHUB}/main/arrozcrucero.webp`,
+                precioDefault: 1280
+            }
+        ];
+
+        // Completar la lista hasta 30 de ser necesario
+        for (let i = productos.length + 1; i <= 30; i++) {
             productos.push({
                 id: i,
-                nombre: `Producto ${i}`,
-                urlImagen: `https://raw.githubusercontent.com/${USUARIO_GITHUB}/${REPOSITORIO_GITHUB}/main/Diapositiva_${i}.jpg`
+                titulo: `PRODUCTO ${i}`,
+                descripcion: "DESCRIPCIÓN DEL PRODUCTO",
+                aclaracion: "",
+                fotoUrl: `https://raw.githubusercontent.com/${USUARIO_GITHUB}/${REPOSITORIO_GITHUB}/main/producto_${i}.png`,
+                precioDefault: 2000
             });
         }
 
-        // Crear dinámicamente las casillas para los 30 precios
+        // Crear formulario para la carga de datos
         const contenedorInputs = document.getElementById('contenedorInputs');
         productos.forEach((p, index) => {
             contenedorInputs.innerHTML += `
-                <div class="item-input">
-                    <label>${p.id}. ${p.nombre}</label>
-                    <input type="number" id="price_${index}" placeholder="Precio regular" value="2750">
+                <div class="item-input-card">
+                    <strong>Item ${p.id}</strong>
+                    <input type="text" id="titulo_${index}" value="${p.titulo}" placeholder="Título">
+                    <input type="text" id="desc_${index}" value="${p.descripcion}" placeholder="Descripción">
+                    <input type="text" id="aclara_${index}" value="${p.aclaracion}" placeholder="Aclaración">
+                    <input type="number" id="price_${index}" value="${p.precioDefault}" placeholder="Precio Regular">
                 </div>
             `;
         });
 
-        // Función que superpone el precio en la diapositiva
-        function crearCartelOferta(producto, precioRegular, pctDescuento) {
+        // Cargar imagen con promesa de forma segura
+        function cargarImagen(src) {
             return new Promise((resolve) => {
-                const canvas = document.createElement('canvas');
-                const ctx = canvas.getContext('2d');
-                
                 const img = new Image();
-                img.crossOrigin = "anonymous"; 
-                img.src = producto.urlImagen;
-
-                img.onload = () => {
-                    canvas.width = img.width;
-                    canvas.height = img.height;
-
-                    // 1. Dibujar la diapositiva original de fondo
-                    ctx.drawImage(img, 0, 0);
-
-                    const precioFinal = Math.round(precioRegular * (1 - pctDescuento / 100));
-
-                    // 2. Dibujar Precio Oferta dentro del recuadro
-                    ctx.fillStyle = "#1e1b4b";
-                    ctx.font = "bold " + (canvas.height * 0.085) + "px sans-serif";
-                    ctx.textAlign = "left";
-                    ctx.fillText("$" + precioFinal.toLocaleString('es-AR'), canvas.width * 0.52, canvas.height * 0.69);
-
-                    // 3. Dibujar Precio Regular abajo
-                    ctx.fillStyle = "#000000";
-                    ctx.font = "bold " + (canvas.height * 0.028) + "px sans-serif";
-                    ctx.textAlign = "center";
-                    ctx.fillText("PRECIO REGULAR $" + precioRegular.toLocaleString('es-AR'), canvas.width * 0.60, canvas.height * 0.81);
-
-                    resolve(canvas.toDataURL('image/png'));
-                };
-
-                // En caso de error o que una imagen todavía no esté subida, omitir
-                img.onerror = () => resolve('');
+                img.crossOrigin = "anonymous";
+                img.onload = () => resolve(img);
+                img.onerror = () => resolve(null);
+                img.src = src;
             });
+        }
+
+        // Generar plantilla completa en Canvas
+        async function crearCartelDinámico(pData, precioRegular, pctDescuento) {
+            const canvas = document.createElement('canvas');
+            canvas.width = 800;
+            canvas.height = 1131;
+            const ctx = canvas.getContext('2d');
+
+            // 1. Cargar todas las imágenes requeridas en paralelo
+            const [imgProducto, imgMp, imgCarrefour] = await Promise.all([
+                cargarImagen(pData.fotoUrl),
+                cargarImagen(URL_MP_LOGO),
+                cargarImagen(URL_CARREFOUR_LOGO)
+            ]);
+
+            // 2. Fondo Amarillo Base
+            ctx.fillStyle = "#ffe600";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // 3. Encabezado Textos
+            ctx.fillStyle = "#001a72";
+            ctx.font = "bold 40px sans-serif";
+            ctx.textAlign = "center";
+            ctx.fillText("HOY JUEVES CON", canvas.width / 2, 65);
+
+            // 4. Logo Mercado Pago (Si cargó correctamente)
+            if (imgMp) {
+                const w = 110, h = (imgMp.height / imgMp.width) * w;
+                ctx.drawImage(imgMp, (canvas.width / 2) - (w / 2), 75, w, h);
+            }
+
+            // 5. Recuadro Blanco Principal
+            ctx.fillStyle = "#ffffff";
+            ctx.lineWidth = 4;
+            ctx.strokeStyle = "#00a3e0";
+            const rx = 50, ry = 145, rw = 700, rh = 865, radius = 25;
+            ctx.beginPath();
+            ctx.roundRect(rx, ry, rw, rh, radius);
+            ctx.fill();
+            ctx.stroke();
+
+            // 6. Logo Carrefour Express (Esquina superior derecha dentro de marco blanco)
+            if (imgCarrefour) {
+                const w = 150, h = (imgCarrefour.height / imgCarrefour.width) * w;
+                ctx.drawImage(imgCarrefour, 580, 160, w, h);
+            }
+
+            // 7. Dibujar Foto del Producto
+            if (imgProducto) {
+                const imgMaxW = 380;
+                const imgMaxH = 360;
+                let scale = Math.min(imgMaxW / imgProducto.width, imgMaxH / imgProducto.height);
+                let w = imgProducto.width * scale;
+                let h = imgProducto.height * scale;
+                ctx.drawImage(imgProducto, (canvas.width - w) / 2, 350 - (h / 2), w, h);
+            }
+
+            // 8. Textos del Producto
+            if (pData.aclaracion) {
+                ctx.fillStyle = "#000000";
+                ctx.font = "bold 18px sans-serif";
+                ctx.textAlign = "left";
+                ctx.fillText(pData.aclaracion, 90, 560);
+            }
+
+            ctx.fillStyle = "#000000";
+            ctx.font = "bold 28px sans-serif";
+            ctx.textAlign = "left";
+            ctx.fillText(pData.titulo, 90, 600);
+
+            ctx.font = "bold 22px sans-serif";
+            ctx.fillText(pData.descripcion, 90, 635);
+
+            // 9. Recuadro Rojo de Precio
+            const precioFinal = Math.round(precioRegular * (1 - pctDescuento / 100));
+            ctx.fillStyle = "#e11d48";
+            ctx.fillRect(400, 660, 320, 140);
+
+            // Precio Oferta en Blanco
+            ctx.fillStyle = "#ffffff";
+            ctx.font = "bold 72px sans-serif";
+            ctx.textAlign = "center";
+            ctx.fillText("$" + precioFinal.toLocaleString('es-AR'), 560, 760);
+
+            // Precio Regular Abajo
+            ctx.fillStyle = "#000000";
+            ctx.font = "bold 22px sans-serif";
+            ctx.textAlign = "center";
+            ctx.fillText("PRECIO REGULAR $" + precioRegular.toLocaleString('es-AR'), 560, 840);
+
+            // 10. Legales / Pie
+            ctx.fillStyle = "#000000";
+            ctx.font = "bold 16px sans-serif";
+            ctx.textAlign = "center";
+            ctx.fillText("Abonando con QR desde el celular, exclusivo dinero en cuenta.", canvas.width / 2, 1040);
+            ctx.fillText("COMPRA MAYOR A $15000", canvas.width / 2, 1065);
+
+            return canvas.toDataURL('image/png');
         }
 
         async function generarTodasLasOfertas() {
             const previewGrid = document.getElementById('previewGrid');
-            previewGrid.innerHTML = 'Generando imágenes...';
+            previewGrid.innerHTML = 'Generando afiches...';
 
             const pctDescuento = parseFloat(document.getElementById('descuentoInput').value) || 0;
             const fragment = document.createDocumentFragment();
 
             for (let i = 0; i < productos.length; i++) {
+                const pData = {
+                    id: productos[i].id,
+                    titulo: document.getElementById(`titulo_${i}`).value,
+                    descripcion: document.getElementById(`desc_${i}`).value,
+                    aclaracion: document.getElementById(`aclara_${i}`).value,
+                    fotoUrl: productos[i].fotoUrl
+                };
                 const precioReg = parseFloat(document.getElementById(`price_${i}`).value) || 0;
-                const urlResult = await crearCartelOferta(productos[i], precioReg, pctDescuento);
 
+                const urlResult = await crearCartelDinámico(pData, precioReg, pctDescuento);
                 if (urlResult) {
                     const img = document.createElement('img');
                     img.src = urlResult;
@@ -266,5 +199,3 @@
             previewGrid.appendChild(fragment);
         }
     </script>
-</body>
-</html>
