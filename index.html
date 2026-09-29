@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generador de Ofertas - 30 Productos</title>
+    <title>Generador de Ofertas Masivo</title>
     <style>
         :root {
             --bg-gray: #f4f4f5;
@@ -180,22 +180,21 @@
     </div>
 
     <script>
-        // CONFIGURACIÓN DE TUS DATOS DE GITHUB:
-        const USUARIO_GITHUB = "TU_USUARIO"; 
-        const REPOSITORIO_GITHUB = "NOMBRE_DEL_REPO";
+        // CONFIGURACIÓN AJUSTADA A TU REPOSITORIO DE GITHUB:
+        const USUARIO_GITHUB = "OrellanoL"; 
+        const REPOSITORIO_GITHUB = "generador-imagenes";
 
-        // Array de 30 productos con sus imágenes correspondientes
+        // Genera la lista de tus 30 diapositivas
         const productos = [];
         for (let i = 1; i <= 30; i++) {
             productos.push({
                 id: i,
                 nombre: `Producto ${i}`,
-                // Ajustá "Diapositiva" o la extensión (.png/.jpg) según como se guardaron tus fotos
-                urlImagen: `https://raw.githubusercontent.com/${USUARIO_GITHUB}/${REPOSITORIO_GITHUB}/main/Diapositiva${i}.png`
+                urlImagen: `https://raw.githubusercontent.com/${USUARIO_GITHUB}/${REPOSITORIO_GITHUB}/main/Diapositiva_${i}.jpg`
             });
         }
 
-        // Crear dinámicamente las casillas de texto para los 30 precios
+        // Crear dinámicamente las casillas para los 30 precios
         const contenedorInputs = document.getElementById('contenedorInputs');
         productos.forEach((p, index) => {
             contenedorInputs.innerHTML += `
@@ -206,7 +205,7 @@
             `;
         });
 
-        // Función que superpone el precio en la plantilla
+        // Función que superpone el precio en la diapositiva
         function crearCartelOferta(producto, precioRegular, pctDescuento) {
             return new Promise((resolve) => {
                 const canvas = document.createElement('canvas');
@@ -220,15 +219,14 @@
                     canvas.width = img.width;
                     canvas.height = img.height;
 
-                    // 1. Dibujar plantilla original de fondo
+                    // 1. Dibujar la diapositiva original de fondo
                     ctx.drawImage(img, 0, 0);
 
                     const precioFinal = Math.round(precioRegular * (1 - pctDescuento / 100));
 
                     // 2. Dibujar Precio Oferta dentro del recuadro
-                    // (Si la posición no calza exacto en tu diseño, se ajusta multiplicando canvas.width / canvas.height)
                     ctx.fillStyle = "#1e1b4b";
-                    ctx.font = "bold " + (canvas.height * 0.09) + "px sans-serif";
+                    ctx.font = "bold " + (canvas.height * 0.085) + "px sans-serif";
                     ctx.textAlign = "left";
                     ctx.fillText("$" + precioFinal.toLocaleString('es-AR'), canvas.width * 0.52, canvas.height * 0.69);
 
@@ -241,10 +239,8 @@
                     resolve(canvas.toDataURL('image/png'));
                 };
 
-                // En caso de que la imagen no cargue, devuelve placeholder vacio
-                img.onerror = () => {
-                    resolve('');
-                };
+                // En caso de error o que una imagen todavía no esté subida, omitir
+                img.onerror = () => resolve('');
             });
         }
 
