@@ -242,7 +242,7 @@
             });
         }
 
-async function crearCartelDinámico(pData, precioRegular, pctDescuento) {
+        async function crearCartelDinámico(pData, precioRegular, pctDescuento) {
             const canvas = document.createElement('canvas');
             canvas.width = 800;
             canvas.height = 1131;
@@ -297,27 +297,10 @@ async function crearCartelDinámico(pData, precioRegular, pctDescuento) {
             }
 
             // =========================================================
-            // POSICIONAMIENTO CENTRADO VERTICALMENTE AL COSTADO
+            // POSICIONAMIENTO IGUAL A LA FOTO DE REFERENCIA
             // =========================================================
 
-            // 1. RECUADRO DE PRECIO OFERTA (Rojo)
-            const precioFinal = Math.round(precioRegular * (1 - pctDescuento / 100));
-            ctx.fillStyle = "#e11d48";
-            ctx.fillRect(390, 580, 310, 125);
-
-            // Monto de Oferta
-            ctx.fillStyle = "#ffffff";
-            ctx.font = "bold 70px sans-serif";
-            ctx.textAlign = "center";
-            ctx.fillText("$" + precioFinal.toLocaleString('es-AR'), 545, 670);
-
-            // Precio Regular
-            ctx.fillStyle = "#000000";
-            ctx.font = "bold 22px sans-serif";
-            ctx.textAlign = "center";
-            ctx.fillText("PRECIO REGULAR $" + precioRegular.toLocaleString('es-AR'), 545, 740);
-
-            // 2. ACLARACIÓN: Alineada a la derecha sobre la caja roja
+            // 1. ACLARACIÓN: Sobre el recuadro rojo, alineada a la DERECHA del mismo (X = 700)
             if (pData.aclaracion) {
                 ctx.fillStyle = "#000000";
                 ctx.font = "bold 16px sans-serif";
@@ -325,15 +308,19 @@ async function crearCartelDinámico(pData, precioRegular, pctDescuento) {
                 ctx.fillText(pData.aclaracion.toUpperCase(), 700, 560);
             }
 
-            // 3. TÍTULO Y DESCRIPCIÓN: Centrados en el eje vertical de la caja roja (Y centro = 642)
+            // 2. TÍTULO Y DESCRIPCIÓN: A la izquierda, arrancando desde más arriba
             ctx.fillStyle = "#000000";
             ctx.textAlign = "left";
 
-            // Dividir la descripción en líneas para calcular la altura total
+            // Título principal
+            ctx.font = "bold 26px sans-serif";
+            ctx.fillText(pData.titulo, 100, 620);
+
+            // Descripción (con salto de línea si es necesario)
             ctx.font = "bold 18px sans-serif";
             const palabras = pData.descripcion.split(" ");
             let linea = "";
-            let y = 565;
+            let y = 650;
             for (let n = 0; n < palabras.length; n++) {
                 let testLinea = linea + palabras[n] + " ";
                 let metrics = ctx.measureText(testLinea);
@@ -345,28 +332,24 @@ async function crearCartelDinámico(pData, precioRegular, pctDescuento) {
                     linea = testLinea;
                 }
             }
-            lineasDesc.push(lineaActual);
+            ctx.fillText(linea, 100, y);
 
-            // Cálculo para centrar el conjunto (Título + Líneas de Descripción) al medio del recuadro
-            const alturaLineaDesc = 24;
-            const alturaTitulo = 28;
-            const espaciadoEntre = 10;
-            const alturaTotalTexto = alturaTitulo + espaciadoEntre + (lineasDesc.length * alturaLineaDesc);
+            // 3. RECUADRO DE PRECIO OFERTA (Rojo)
+            const precioFinal = Math.round(precioRegular * (1 - pctDescuento / 100));
+            ctx.fillStyle = "#e11d48";
+            ctx.fillRect(390, 580, 310, 125);
 
-            // Centro vertical de la caja roja = 642.5px
-            let yInicio = 642 - (alturaTotalTexto / 2) + 20;
+            // Monto de Oferta dentro de la caja roja
+            ctx.fillStyle = "#ffffff";
+            ctx.font = "bold 70px sans-serif";
+            ctx.textAlign = "center";
+            ctx.fillText("$" + precioFinal.toLocaleString('es-AR'), 545, 670);
 
-            // Renderizar Título
-            ctx.font = "bold 26px sans-serif";
-            ctx.fillText(pData.titulo, 100, yInicio);
-
-            // Renderizar Líneas de Descripción
-            ctx.font = "bold 18px sans-serif";
-            let yDesc = yInicio + espaciadoEntre + 18;
-            for (let l = 0; l < lineasDesc.length; l++) {
-                ctx.fillText(lineasDesc[l], 100, yDesc);
-                yDesc += alturaLineaDesc;
-            }
+            // Precio Regular debajo del recuadro
+            ctx.fillStyle = "#000000";
+            ctx.font = "bold 22px sans-serif";
+            ctx.textAlign = "center";
+            ctx.fillText("PRECIO REGULAR $" + precioRegular.toLocaleString('es-AR'), 545, 740);
 
             // Pie de página
             ctx.fillStyle = "#000000";
@@ -377,7 +360,7 @@ async function crearCartelDinámico(pData, precioRegular, pctDescuento) {
 
             return canvas.toDataURL('image/png');
         }
-        
+
         async function generarTodasLasOfertas() {
             const previewGrid = document.getElementById('previewGrid');
             previewGrid.innerHTML = 'Generando afiches...';
