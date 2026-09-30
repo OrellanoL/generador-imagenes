@@ -332,17 +332,17 @@ async function crearCartelDinámico(pData, precioRegular, pctDescuento) {
             // Dividir la descripción en líneas para calcular la altura total
             ctx.font = "bold 18px sans-serif";
             const palabras = pData.descripcion.split(" ");
-            const lineasDesc = [];
-            let lineaActual = "";
-
+            let linea = "";
+            let y = 565;
             for (let n = 0; n < palabras.length; n++) {
-                let testLinea = lineaActual + palabras[n] + " ";
+                let testLinea = linea + palabras[n] + " ";
                 let metrics = ctx.measureText(testLinea);
                 if (metrics.width > 270 && n > 0) {
-                    lineasDesc.push(lineaActual);
-                    lineaActual = palabras[n] + " ";
+                    ctx.fillText(linea, 100, y);
+                    linea = palabras[n] + " ";
+                    y += 24;
                 } else {
-                    lineaActual = testLinea;
+                    linea = testLinea;
                 }
             }
             lineasDesc.push(lineaActual);
