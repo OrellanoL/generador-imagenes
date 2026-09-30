@@ -264,7 +264,7 @@
             ctx.textAlign = "center";
             ctx.fillText("HOY JUEVES CON", canvas.width / 2, 65);
 
-            // Logo Mercado Pago
+            // Logo MP
             if (imgMp) {
                 const w = 110, h = (imgMp.height / imgMp.width) * w;
                 ctx.drawImage(imgMp, (canvas.width / 2) - (w / 2), 75, w, h);
@@ -280,7 +280,7 @@
             ctx.fill();
             ctx.stroke();
 
-            // Logo Carrefour Express
+            // Logo Carrefour
             if (imgCarrefour) {
                 const w = 150, h = (imgCarrefour.height / imgCarrefour.width) * w;
                 ctx.drawImage(imgCarrefour, 580, 160, w, h);
@@ -293,63 +293,61 @@
                 let scale = Math.min(imgMaxW / imgProducto.width, imgMaxH / imgProducto.height);
                 let w = imgProducto.width * scale;
                 let h = imgProducto.height * scale;
-                ctx.drawImage(imgProducto, (canvas.width - w) / 2, 340 - (h / 2), w, h);
+                ctx.drawImage(imgProducto, (canvas.width - w) / 2, 350 - (h / 2), w, h);
             }
 
-            // =========================================================
-            // POSICIONAMIENTO IGUAL A LA FOTO DE REFERENCIA
-            // =========================================================
+            // --- POSICIONAMIENTO DE TEXTOS Y PRECIO ---
 
-            // 1. ACLARACIÓN: Sobre el recuadro rojo, alineada a la DERECHA del mismo (X = 700)
+            // 1. ACLARACIÓN: Ubicada sobre el recuadro del precio (Alineada a la derecha)
+            // 1. ACLARACIÓN: Centrada sobre el recuadro de precio
             if (pData.aclaracion) {
                 ctx.fillStyle = "#000000";
-                ctx.font = "bold 16px sans-serif";
-                ctx.textAlign = "right";
-                ctx.fillText(pData.aclaracion.toUpperCase(), 700, 560);
+                ctx.font = "bold 18px sans-serif";
+                ctx.textAlign = "center";
+                ctx.fillText(pData.aclaracion.toUpperCase(), 560, 640);
             }
 
-            // 2. TÍTULO Y DESCRIPCIÓN: A la izquierda, arrancando desde más arriba
+            // 2. TÍTULO Y DESCRIPCIÓN: Ubicados a la izquierda (Al lado de la caja de precio)
             ctx.fillStyle = "#000000";
             ctx.textAlign = "left";
 
-            // Título principal
-            ctx.font = "bold 26px sans-serif";
-            ctx.fillText(pData.titulo, 100, 620);
+            // Título
+            ctx.font = "bold 28px sans-serif";
+            ctx.fillText(pData.titulo, 80, 680);
 
-            // Descripción (con salto de línea si es necesario)
-            ctx.font = "bold 18px sans-serif";
+            // Descripción al costado del precio (con salto de línea si es largo)
+            ctx.font = "bold 20px sans-serif";
             const palabras = pData.descripcion.split(" ");
             let linea = "";
-            let y = 650;
+            let y = 715;
             for (let n = 0; n < palabras.length; n++) {
                 let testLinea = linea + palabras[n] + " ";
                 let metrics = ctx.measureText(testLinea);
-                if (metrics.width > 270 && n > 0) {
-                    ctx.fillText(linea, 100, y);
+                if (metrics.width > 300 && n > 0) {
+                    ctx.fillText(linea, 80, y);
                     linea = palabras[n] + " ";
-                    y += 24;
+                    y += 28;
                 } else {
                     linea = testLinea;
                 }
             }
-            ctx.fillText(linea, 100, y);
+            ctx.fillText(linea, 80, y);
 
-            // 3. RECUADRO DE PRECIO OFERTA (Rojo)
+            // 3. RECUADRO DE PRECIO: Lado derecho
             const precioFinal = Math.round(precioRegular * (1 - pctDescuento / 100));
             ctx.fillStyle = "#e11d48";
-            ctx.fillRect(390, 580, 310, 125);
+            ctx.fillRect(400, 660, 320, 140);
 
-            // Monto de Oferta dentro de la caja roja
             ctx.fillStyle = "#ffffff";
-            ctx.font = "bold 70px sans-serif";
+            ctx.font = "bold 72px sans-serif";
             ctx.textAlign = "center";
-            ctx.fillText("$" + precioFinal.toLocaleString('es-AR'), 545, 670);
+            ctx.fillText("$" + precioFinal.toLocaleString('es-AR'), 560, 760);
 
             // Precio Regular debajo del recuadro
             ctx.fillStyle = "#000000";
             ctx.font = "bold 22px sans-serif";
             ctx.textAlign = "center";
-            ctx.fillText("PRECIO REGULAR $" + precioRegular.toLocaleString('es-AR'), 545, 740);
+            ctx.fillText("PRECIO REGULAR $" + precioRegular.toLocaleString('es-AR'), 560, 840);
 
             // Pie de página
             ctx.fillStyle = "#000000";
