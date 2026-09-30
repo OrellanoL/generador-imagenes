@@ -360,17 +360,18 @@
     ctx.fillStyle = "#000000";
 
     // Texto abonando QR
-    ctx.font = "bold 18px sans-serif";
+    ctx.font = "bold 26x sans-serif";
     ctx.textAlign = "center";
     ctx.fillText("Abonando con QR desde el celular,", 360, 930);
-    ctx.fillText("exclusivo dinero en cuenta.", 360, 955);
+    ctx.fillText("EXCLUSIVO DINERO EN CUENTA.", 360, 955);
+    ctx.fillText("COMPRA MINIMA DE $15000", 360, 980);
 
     // Compra mayor a $15000
-    ctx.font = "bold 16px sans-serif";
-    ctx.textAlign = "right";
-    ctx.fillText("COMPRA", 760, 915);
-    ctx.fillText("MAYOR A", 760, 937);
-    ctx.fillText("$15000", 760, 959);
+    //ctx.font = "bold 16px sans-serif";
+    //ctx.textAlign = "center";
+    //ctx.fillText("COMPRA", 360, 915);
+    //ctx.fillText("MAYOR A", 360, 937);
+    //ctx.fillText("$15000", 360, 959);
 
     return canvas.toDataURL('image/png');
 }
