@@ -181,7 +181,7 @@
             {
                 id: 1,
                 titulo: "PAPEL HIGIÉNICO",
-                descripcion: "HOJA SIMPLE X 4 U. X 30 MT! \"HIGIENOL\"",
+                descripcion: "HOJA SIMPLE X 4 U. X 30 MT! HIGIENOL",
                 aclaracion: "LLEVANDO 2 UNIDADES C/U",
                 fotoUrl: `https://raw.githubusercontent.com/${USUARIO_GITHUB}/${REPOSITORIO_GITHUB}/main/Higienol.jpg`,
                 precioDefault: 2750
@@ -189,7 +189,7 @@
             {
                 id: 2,
                 titulo: "GALLETITAS",
-                descripcion: "SANDWICH X 3 U X 108 G \"TRAVIATA\"",
+                descripcion: "SANDWICH X 3 U X 108 G TRAVIATA",
                 aclaracion: "",
                 fotoUrl: `https://raw.githubusercontent.com/${USUARIO_GITHUB}/${REPOSITORIO_GITHUB}/main/traviata.webp`,
                 precioDefault: 2389
@@ -197,7 +197,7 @@
             {
                 id: 3,
                 titulo: "ARROZ LARGO",
-                descripcion: "FINO 00000 X 1 KG \"CRUCERO\"",
+                descripcion: "FINO 00000 X 1 KG CRUCERO",
                 aclaracion: "",
                 fotoUrl: `https://raw.githubusercontent.com/${USUARIO_GITHUB}/${REPOSITORIO_GITHUB}/main/arrozcrucero.webp`,
                 precioDefault: 1280
@@ -216,7 +216,7 @@
             });
         }
 
-        // Carga dinámica de inputs esperando a que el DOM esté disponible
+        // Carga dinámica de inputs en pantalla
         window.addEventListener('DOMContentLoaded', () => {
             const contenedorInputs = document.getElementById('contenedorInputs');
             if (!contenedorInputs) return;
@@ -234,7 +234,7 @@
             });
         });
 
-        // Promesa para cargar imágenes sin bloqueos
+        // Promesa para cargar imágenes sin bloqueos de CORS
         function cargarImagen(src) {
             return new Promise((resolve) => {
                 const img = new Image();
@@ -245,7 +245,7 @@
             });
         }
 
-        // Función que dibuja el afiche completo en Canvas
+        // Dibuja el afiche dinámico
         async function crearCartelDinámico(pData, precioRegular, pctDescuento) {
             const canvas = document.createElement('canvas');
             canvas.width = 800;
@@ -292,31 +292,47 @@
 
             // Imagen del Producto
             if (imgProducto) {
-                const imgMaxW = 380;
-                const imgMaxH = 360;
+                const imgMaxW = 420;
+                const imgMaxH = 380;
                 let scale = Math.min(imgMaxW / imgProducto.width, imgMaxH / imgProducto.height);
                 let w = imgProducto.width * scale;
                 let h = imgProducto.height * scale;
-                ctx.drawImage(imgProducto, (canvas.width - w) / 2, 350 - (h / 2), w, h);
+                ctx.drawImage(imgProducto, (canvas.width - w) / 2, 340 - (h / 2), w, h);
             }
 
-            // Textos descriptivos
+            // 1. Aclaración posicionada arriba del recuadro de precio
             if (pData.aclaracion) {
                 ctx.fillStyle = "#000000";
                 ctx.font = "bold 18px sans-serif";
-                ctx.textAlign = "left";
-                ctx.fillText(pData.aclaracion, 90, 560);
+                ctx.textAlign = "right";
+                ctx.fillText(pData.aclaracion.toUpperCase(), 720, 640);
             }
 
+            // 2. Título y Descripción posicionados a la izquierda
             ctx.fillStyle = "#000000";
-            ctx.font = "bold 28px sans-serif";
             ctx.textAlign = "left";
-            ctx.fillText(pData.titulo, 90, 600);
+            
+            ctx.font = "bold 28px sans-serif";
+            ctx.fillText(pData.titulo, 80, 710);
 
-            ctx.font = "bold 22px sans-serif";
-            ctx.fillText(pData.descripcion, 90, 635);
+            ctx.font = "bold 20px sans-serif";
+            const palabras = pData.descripcion.split(" ");
+            let linea = "";
+            let y = 745;
+            for (let n = 0; n < palabras.length; n++) {
+                let testLinea = linea + palabras[n] + " ";
+                let metrics = ctx.measureText(testLinea);
+                if (metrics.width > 300 && n > 0) {
+                    ctx.fillText(linea, 80, y);
+                    linea = palabras[n] + " ";
+                    y += 28;
+                } else {
+                    linea = testLinea;
+                }
+            }
+            ctx.fillText(linea, 80, y);
 
-            // Cuestión de Precios
+            // 3. Recuadro del Precio en Oferta
             const precioFinal = Math.round(precioRegular * (1 - pctDescuento / 100));
             ctx.fillStyle = "#e11d48";
             ctx.fillRect(400, 660, 320, 140);
@@ -326,6 +342,7 @@
             ctx.textAlign = "center";
             ctx.fillText("$" + precioFinal.toLocaleString('es-AR'), 560, 760);
 
+            // Precio Regular debajo del recuadro
             ctx.fillStyle = "#000000";
             ctx.font = "bold 22px sans-serif";
             ctx.textAlign = "center";
@@ -341,7 +358,7 @@
             return canvas.toDataURL('image/png');
         }
 
-        // Función disparada por el botón 'Generar Ofertas'
+        // Generar todas las imágenes en pantalla
         async function generarTodasLasOfertas() {
             const previewGrid = document.getElementById('previewGrid');
             previewGrid.innerHTML = 'Generando afiches...';
