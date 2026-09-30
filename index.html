@@ -242,7 +242,7 @@
             });
         }
 
-        async function crearCartelDinámico(pData, precioRegular, pctDescuento) {
+       async function crearCartelDinámico(pData, precioRegular, pctDescuento) {
             const canvas = document.createElement('canvas');
             canvas.width = 800;
             canvas.height = 1131;
@@ -270,7 +270,7 @@
                 ctx.drawImage(imgMp, (canvas.width / 2) - (w / 2), 75, w, h);
             }
 
-            // Recuadro Blanco
+            // Recuadro Blanco Central
             ctx.fillStyle = "#ffffff";
             ctx.lineWidth = 4;
             ctx.strokeStyle = "#00a3e0";
@@ -286,43 +286,50 @@
                 ctx.drawImage(imgCarrefour, 580, 160, w, h);
             }
 
-            // Imagen del Producto
+            // 1. IMAGEN DEL PRODUCTO (Agrandada para llenar el espacio central)
             if (imgProducto) {
-                const imgMaxW = 400;
-                const imgMaxH = 360;
+                const imgMaxW = 520; // Aumentado de 400 a 520
+                const imgMaxH = 430; // Aumentado de 360 a 430
                 let scale = Math.min(imgMaxW / imgProducto.width, imgMaxH / imgProducto.height);
                 let w = imgProducto.width * scale;
                 let h = imgProducto.height * scale;
-                ctx.drawImage(imgProducto, (canvas.width - w) / 2, 350 - (h / 2), w, h);
+                ctx.drawImage(imgProducto, (canvas.width - w) / 2, 380 - (h / 2), w, h);
             }
 
-            // --- POSICIONAMIENTO DE TEXTOS Y PRECIO ---
+            // --- SECCIÓN INFERIOR: TEXTO Y PRECIO EQUILIBRADOS ---
 
-            // 1. ACLARACIÓN: Centrada justo sobre el recuadro de precio
+            // Cartel Rojo de Precio (Desplazado un poco a la izquierda para cerrar la brecha)
+            const posXCartel = 370; // Movido de 400 a 370
+            const anchoCartel = 350; // Ampliado a 350
+            const centroCartel = posXCartel + (anchoCartel / 2); // 545px
+
+            // Aclaración (Centrada sobre el cartel)
             if (pData.aclaracion) {
                 ctx.fillStyle = "#000000";
-                ctx.font = "bold 18px sans-serif";
+                ctx.font = "bold 20px sans-serif";
                 ctx.textAlign = "center";
-                ctx.fillText(pData.aclaracion.toUpperCase(), 560, 625);
+                ctx.fillText(pData.aclaracion.toUpperCase(), centroCartel, 620);
             }
 
-            // 2. TÍTULO Y DESCRIPCIÓN: A la izquierda al costado del cartel rojo
+            // TÍTULO Y DESCRIPCIÓN (Ocupa hasta la posición 350)
             ctx.fillStyle = "#000000";
             ctx.textAlign = "left";
 
-            // Título (EN NEGRITA)
-            ctx.font = "bold 26px sans-serif";
-            ctx.fillText(pData.titulo, 80, 670);
+            // Título
+            ctx.font = "bold 30px sans-serif"; // Tipografía más grande
+            ctx.fillText(pData.titulo, 80, 665);
 
-            // Descripción (SIN NEGRITA)
+            // Descripción
             ctx.font = "22px sans-serif";
             const palabras = pData.descripcion.split(" ");
             let linea = "";
-            let y = 702;
+            let y = 700;
+            const maxAnchoTexto = 260; // Ajustado para no solaparse con el cartel
+
             for (let n = 0; n < palabras.length; n++) {
                 let testLinea = linea + palabras[n] + " ";
                 let metrics = ctx.measureText(testLinea);
-                if (metrics.width > 280 && n > 0) {
+                if (metrics.width > maxAnchoTexto && n > 0) {
                     ctx.fillText(linea, 80, y);
                     linea = palabras[n] + " ";
                     y += 28;
@@ -332,22 +339,22 @@
             }
             ctx.fillText(linea, 80, y);
 
-            // 3. RECUADRO DE PRECIO: Lado derecho
+            // Recuadro de Precio Rojo
             const precioFinal = Math.round(precioRegular * (1 - pctDescuento / 100));
             ctx.fillStyle = "#e11d48";
-            ctx.fillRect(400, 640, 320, 160);
+            ctx.fillRect(posXCartel, 640, anchoCartel, 160);
 
-            // Precio Oferta Agrandado (85px)
+            // Precio Oferta ($ grande)
             ctx.fillStyle = "#ffffff";
-            ctx.font = "bold 85px sans-serif";
+            ctx.font = "bold 90px sans-serif";
             ctx.textAlign = "center";
-            ctx.fillText("$" + precioFinal.toLocaleString('es-AR'), 560, 750);
+            ctx.fillText("$" + precioFinal.toLocaleString('es-AR'), centroCartel, 752);
 
-            // Precio Regular debajo del recuadro
+            // Precio Regular
             ctx.fillStyle = "#000000";
             ctx.font = "bold 22px sans-serif";
             ctx.textAlign = "center";
-            ctx.fillText("PRECIO REGULAR $" + precioRegular.toLocaleString('es-AR'), 560, 835);
+            ctx.fillText("PRECIO REGULAR $" + precioRegular.toLocaleString('es-AR'), centroCartel, 835);
 
             // 4. PIE DE PÁGINA
             ctx.fillStyle = "#000000";
@@ -358,7 +365,7 @@
             ctx.fillText("Abonando con QR desde el celular,", 360, 1045);
             ctx.fillText("exclusivo dinero en cuenta.", 360, 1070);
 
-            // Compra mayor a $15000 a la derecha
+            // Compra mayor a $15000
             ctx.font = "bold 16px sans-serif";
             ctx.textAlign = "right";
             ctx.fillText("COMPRA", 760, 1030);
