@@ -298,13 +298,12 @@
 
             // --- POSICIONAMIENTO DE TEXTOS Y PRECIO ---
 
-            // 1. ACLARACIÓN: Ubicada sobre el recuadro del precio (Alineada a la derecha)
-            // 1. ACLARACIÓN: Centrada sobre el recuadro de precio
+            // 1. ACLARACIÓN: Centrada justo sobre el recuadro de precio
             if (pData.aclaracion) {
                 ctx.fillStyle = "#000000";
-                ctx.font = "bold 18px sans-serif";
-                ctx.textAlign = "center";
-                ctx.fillText(pData.aclaracion.toUpperCase(), 560, 640);
+                ctx.font = "bold 16px sans-serif";
+                ctx.textAlign = "center"; // Alineación centrada
+                ctx.fillText(pData.aclaracion.toUpperCase(), 545, 480); // X = 545 es el centro exacto de la caja roja
             }
 
             // 2. TÍTULO Y DESCRIPCIÓN: Ubicados a la izquierda (Al lado de la caja de precio)
