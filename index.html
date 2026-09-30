@@ -204,7 +204,7 @@
             }
         ];
 
-        // Completar la lista
+        // Completar la lista hasta 30 elementos
         for (let i = productos.length + 1; i <= 30; i++) {
             productos.push({
                 id: i,
@@ -216,8 +216,8 @@
             });
         }
 
-        // Ejecutar cuando el DOM esté listo para evitar errores de 'null'
-        document.addEventListener('DOMContentLoaded', () => {
+        // Carga dinámica de inputs esperando a que el DOM esté disponible
+        window.addEventListener('DOMContentLoaded', () => {
             const contenedorInputs = document.getElementById('contenedorInputs');
             if (!contenedorInputs) return;
 
@@ -234,6 +234,7 @@
             });
         });
 
+        // Promesa para cargar imágenes sin bloqueos
         function cargarImagen(src) {
             return new Promise((resolve) => {
                 const img = new Image();
@@ -244,6 +245,7 @@
             });
         }
 
+        // Función que dibuja el afiche completo en Canvas
         async function crearCartelDinámico(pData, precioRegular, pctDescuento) {
             const canvas = document.createElement('canvas');
             canvas.width = 800;
@@ -266,13 +268,13 @@
             ctx.textAlign = "center";
             ctx.fillText("HOY JUEVES CON", canvas.width / 2, 65);
 
-            // Logo MP
+            // Logo Mercado Pago
             if (imgMp) {
                 const w = 110, h = (imgMp.height / imgMp.width) * w;
                 ctx.drawImage(imgMp, (canvas.width / 2) - (w / 2), 75, w, h);
             }
 
-            // Recuadro Blanco
+            // Recuadro Blanco Principal
             ctx.fillStyle = "#ffffff";
             ctx.lineWidth = 4;
             ctx.strokeStyle = "#00a3e0";
@@ -282,13 +284,13 @@
             ctx.fill();
             ctx.stroke();
 
-            // Logo Carrefour
+            // Logo Carrefour Express
             if (imgCarrefour) {
                 const w = 150, h = (imgCarrefour.height / imgCarrefour.width) * w;
                 ctx.drawImage(imgCarrefour, 580, 160, w, h);
             }
 
-            // Producto
+            // Imagen del Producto
             if (imgProducto) {
                 const imgMaxW = 380;
                 const imgMaxH = 360;
@@ -298,7 +300,7 @@
                 ctx.drawImage(imgProducto, (canvas.width - w) / 2, 350 - (h / 2), w, h);
             }
 
-            // Textos
+            // Textos descriptivos
             if (pData.aclaracion) {
                 ctx.fillStyle = "#000000";
                 ctx.font = "bold 18px sans-serif";
@@ -314,7 +316,7 @@
             ctx.font = "bold 22px sans-serif";
             ctx.fillText(pData.descripcion, 90, 635);
 
-            // Recuadro Precio
+            // Cuestión de Precios
             const precioFinal = Math.round(precioRegular * (1 - pctDescuento / 100));
             ctx.fillStyle = "#e11d48";
             ctx.fillRect(400, 660, 320, 140);
@@ -329,7 +331,7 @@
             ctx.textAlign = "center";
             ctx.fillText("PRECIO REGULAR $" + precioRegular.toLocaleString('es-AR'), 560, 840);
 
-            // Pie
+            // Pie de página / Legales
             ctx.fillStyle = "#000000";
             ctx.font = "bold 16px sans-serif";
             ctx.textAlign = "center";
@@ -339,6 +341,7 @@
             return canvas.toDataURL('image/png');
         }
 
+        // Función disparada por el botón 'Generar Ofertas'
         async function generarTodasLasOfertas() {
             const previewGrid = document.getElementById('previewGrid');
             previewGrid.innerHTML = 'Generando afiches...';
