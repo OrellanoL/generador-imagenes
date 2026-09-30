@@ -333,14 +333,17 @@
             ctx.fillText(linea, 80, y);
 
             // 3. RECUADRO DE PRECIO: Lado derecho
+
+            
+         // 3. RECUADRO DE PRECIO: Lado derecho
             const precioFinal = Math.round(precioRegular * (1 - pctDescuento / 100));
             ctx.fillStyle = "#e11d48";
             ctx.fillRect(400, 660, 320, 140);
 
             ctx.fillStyle = "#ffffff";
-            ctx.font = "bold 72px sans-serif";
+            ctx.font = "bold 85px sans-serif"; // <-- CAMBIÁ ACÁ EL TAMAÑO (Ej: 85px)
             ctx.textAlign = "center";
-            ctx.fillText("$" + precioFinal.toLocaleString('es-AR'), 560, 760);
+            ctx.fillText("$" + precioFinal.toLocaleString('es-AR'), 560, 765); // <-- AJUSTADO Y A 765
 
             // Precio Regular debajo del recuadro
             ctx.fillStyle = "#000000";
