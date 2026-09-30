@@ -302,11 +302,11 @@
             if (pData.aclaracion) {
                 ctx.fillStyle = "#000000";
                 ctx.font = "bold 16px sans-serif";
-                ctx.textAlign = "center"; // Alineación centrada
-                ctx.fillText(pData.aclaracion.toUpperCase(), 545, 480); // X = 545 es el centro exacto de la caja roja
+                ctx.textAlign = "center";
+                ctx.fillText(pData.aclaracion.toUpperCase(), 560, 640);
             }
 
-            // 2. TÍTULO Y DESCRIPCIÓN: Ubicados a la izquierda (Al lado de la caja de precio)
+            // 2. TÍTULO Y DESCRIPCIÓN: Ubicados a la izquierda
             ctx.fillStyle = "#000000";
             ctx.textAlign = "left";
 
@@ -314,7 +314,7 @@
             ctx.font = "bold 28px sans-serif";
             ctx.fillText(pData.titulo, 80, 680);
 
-            // Descripción al costado del precio (con salto de línea si es largo)
+            // Descripción al costado del precio
             ctx.font = "bold 20px sans-serif";
             const palabras = pData.descripcion.split(" ");
             let linea = "";
@@ -333,17 +333,15 @@
             ctx.fillText(linea, 80, y);
 
             // 3. RECUADRO DE PRECIO: Lado derecho
-
-            
-         // 3. RECUADRO DE PRECIO: Lado derecho
             const precioFinal = Math.round(precioRegular * (1 - pctDescuento / 100));
             ctx.fillStyle = "#e11d48";
             ctx.fillRect(400, 660, 320, 140);
 
+            // Precio Oferta Agrandado (85px)
             ctx.fillStyle = "#ffffff";
-            ctx.font = "bold 85px sans-serif"; // <-- CAMBIÁ ACÁ EL TAMAÑO (Ej: 85px)
+            ctx.font = "bold 85px sans-serif";
             ctx.textAlign = "center";
-            ctx.fillText("$" + precioFinal.toLocaleString('es-AR'), 560, 765); // <-- AJUSTADO Y A 765
+            ctx.fillText("$" + precioFinal.toLocaleString('es-AR'), 560, 762);
 
             // Precio Regular debajo del recuadro
             ctx.fillStyle = "#000000";
