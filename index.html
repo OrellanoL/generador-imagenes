@@ -242,7 +242,7 @@
             });
         }
 
-        async function crearCartelDinámico(pData, precioRegular, pctDescuento) {
+       async function crearCartelDinámico(pData, precioRegular, pctDescuento) {
             const canvas = document.createElement('canvas');
             canvas.width = 800;
             canvas.height = 1131;
@@ -296,43 +296,45 @@
                 ctx.drawImage(imgProducto, (canvas.width - w) / 2, 350 - (h / 2), w, h);
             }
 
-            // --- POSICIONAMIENTO DE TEXTOS Y PRECIO ---
+            // =========================================================
+            // AQUÍ EMPIEZAN LOS CAMBIOS DE POSICIONAMIENTO Y CENTRADO
+            // =========================================================
 
-            // 1. ACLARACIÓN: Ubicada sobre el recuadro del precio (Alineada a la derecha)
+            // 1. ACLARACIÓN: Centrada justo arriba de la caja roja de precio
             if (pData.aclaracion) {
                 ctx.fillStyle = "#000000";
-                ctx.font = "bold 18px sans-serif";
+                ctx.font = "bold 17px sans-serif";
                 ctx.textAlign = "center";
-                ctx.fillText(pData.aclaracion.toUpperCase(), 560, 640);
+                ctx.fillText(pData.aclaracion.toUpperCase(), 560, 642);
             }
 
-            // 2. TÍTULO Y DESCRIPCIÓN: Ubicados a la izquierda (Al lado de la caja de precio)
+            // 2. TÍTULO Y DESCRIPCIÓN: Centrados respecto a la altura del precio
             ctx.fillStyle = "#000000";
             ctx.textAlign = "left";
 
             // Título
-            ctx.font = "bold 28px sans-serif";
-            ctx.fillText(pData.titulo, 80, 680);
+            ctx.font = "bold 26px sans-serif";
+            ctx.fillText(pData.titulo, 80, 695);
 
-            // Descripción al costado del precio (con salto de línea si es largo)
-            ctx.font = "bold 20px sans-serif";
+            // Descripción al costado del precio
+            ctx.font = "bold 19px sans-serif";
             const palabras = pData.descripcion.split(" ");
             let linea = "";
-            let y = 715;
+            let y = 728;
             for (let n = 0; n < palabras.length; n++) {
                 let testLinea = linea + palabras[n] + " ";
                 let metrics = ctx.measureText(testLinea);
-                if (metrics.width > 300 && n > 0) {
+                if (metrics.width > 290 && n > 0) {
                     ctx.fillText(linea, 80, y);
                     linea = palabras[n] + " ";
-                    y += 28;
+                    y += 25;
                 } else {
                     linea = testLinea;
                 }
             }
             ctx.fillText(linea, 80, y);
 
-            // 3. RECUADRO DE PRECIO: Lado derecho
+            // 3. RECUADRO DE PRECIO (Lado derecho)
             const precioFinal = Math.round(precioRegular * (1 - pctDescuento / 100));
             ctx.fillStyle = "#e11d48";
             ctx.fillRect(400, 660, 320, 140);
@@ -342,11 +344,15 @@
             ctx.textAlign = "center";
             ctx.fillText("$" + precioFinal.toLocaleString('es-AR'), 560, 760);
 
-            // Precio Regular debajo del recuadro
+            // Precio Regular
             ctx.fillStyle = "#000000";
             ctx.font = "bold 22px sans-serif";
             ctx.textAlign = "center";
             ctx.fillText("PRECIO REGULAR $" + precioRegular.toLocaleString('es-AR'), 560, 840);
+
+            // =========================================================
+            // AQUÍ TERMINAN LOS CAMBIOS
+            // =========================================================
 
             // Pie de página
             ctx.fillStyle = "#000000";
@@ -357,7 +363,6 @@
 
             return canvas.toDataURL('image/png');
         }
-
         async function generarTodasLasOfertas() {
             const previewGrid = document.getElementById('previewGrid');
             previewGrid.innerHTML = 'Generando afiches...';
