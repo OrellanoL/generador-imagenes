@@ -243,139 +243,130 @@
         }
 
         async function crearCartelDinámico(pData, precioRegular, pctDescuento) {
-    const canvas = document.createElement('canvas');
-    canvas.width = 800;
-    canvas.height = 1131;
-    const ctx = canvas.getContext('2d');
+            const canvas = document.createElement('canvas');
+            canvas.width = 800;
+            canvas.height = 980; // Reducido de 1131 a 980 para cortar el sobrante inferior
+            const ctx = canvas.getContext('2d');
 
-    const [imgProducto, imgMp, imgCarrefour] = await Promise.all([
-        cargarImagen(pData.fotoUrl),
-        cargarImagen(URL_MP_LOGO),
-        cargarImagen(URL_CARREFOUR_LOGO)
-    ]);
+            const [imgProducto, imgMp, imgCarrefour] = await Promise.all([
+                cargarImagen(pData.fotoUrl),
+                cargarImagen(URL_MP_LOGO),
+                cargarImagen(URL_CARREFOUR_LOGO)
+            ]);
 
-    // 1. FONDO AMARILLO COMPLETO
-    ctx.fillStyle = "#ffe600";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+            // 1. FONDO AMARILLO COMPLETO
+            ctx.fillStyle = "#ffe600";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // 2. ENCABEZADO
-    ctx.fillStyle = "#001a72";
-    ctx.font = "bold 40px sans-serif";
-    ctx.textAlign = "center";
-    ctx.fillText("HOY JUEVES CON", canvas.width / 2, 65);
+            // 2. ENCABEZADO
+            ctx.fillStyle = "#001a72";
+            ctx.font = "bold 38px sans-serif";
+            ctx.textAlign = "center";
+            ctx.fillText("HOY JUEVES CON", canvas.width / 2, 55);
 
-    // Logo Mercado Pago
-    if (imgMp) {
-        const w = 110, h = (imgMp.height / imgMp.width) * w;
-        ctx.drawImage(imgMp, (canvas.width / 2) - (w / 2), 75, w, h);
-    }
+            // Logo Mercado Pago
+            if (imgMp) {
+                const w = 110, h = (imgMp.height / imgMp.width) * w;
+                ctx.drawImage(imgMp, (canvas.width / 2) - (w / 2), 65, w, h);
+            }
 
-    // 3. RECUADRO BLANCO CENTRAL (Reducido de alto de 865 a 700)
-    ctx.fillStyle = "#ffffff";
-    ctx.lineWidth = 4;
-    ctx.strokeStyle = "#00a3e0";
-    const rx = 50, ry = 145, rw = 700, rh = 700, radius = 25;
-    ctx.beginPath();
-    ctx.roundRect(rx, ry, rw, rh, radius);
-    ctx.fill();
-    ctx.stroke();
+            // 3. RECUADRO BLANCO CENTRAL
+            ctx.fillStyle = "#ffffff";
+            ctx.lineWidth = 4;
+            ctx.strokeStyle = "#00a3e0";
+            const rx = 50, ry = 135, rw = 700, rh = 680, radius = 25;
+            ctx.beginPath();
+            ctx.roundRect(rx, ry, rw, rh, radius);
+            ctx.fill();
+            ctx.stroke();
 
-    // Logo Carrefour (Ubicado correctamente a la derecha sin cortarse)
-    if (imgCarrefour) {
-        const w = 90; 
-        const h = (imgCarrefour.height / imgCarrefour.width) * w;
-        const posX = 630;
-        ctx.drawImage(imgCarrefour, posX, 165, w, h);
-    }
+            // Logo Carrefour
+            if (imgCarrefour) {
+                const w = 90; 
+                const h = (imgCarrefour.height / imgCarrefour.width) * w;
+                const posX = 630;
+                ctx.drawImage(imgCarrefour, posX, 150, w, h);
+            }
 
-    // 4. IMAGEN DEL PRODUCTO
-    if (imgProducto) {
-        const imgMaxW = 460;
-        const imgMaxH = 340;
-        let scale = Math.min(imgMaxW / imgProducto.width, imgMaxH / imgProducto.height);
-        let w = imgProducto.width * scale;
-        let h = imgProducto.height * scale;
-        ctx.drawImage(imgProducto, (canvas.width - w) / 2, 340 - (h / 2), w, h);
-    }
+            // 4. IMAGEN DEL PRODUCTO
+            if (imgProducto) {
+                const imgMaxW = 460;
+                const imgMaxH = 320;
+                let scale = Math.min(imgMaxW / imgProducto.width, imgMaxH / imgProducto.height);
+                let w = imgProducto.width * scale;
+                let h = imgProducto.height * scale;
+                ctx.drawImage(imgProducto, (canvas.width - w) / 2, 310 - (h / 2), w, h);
+            }
 
-    // 5. ACLARACIÓN ("LLEVANDO 2 UNIDADES C/U")
-    if (pData.aclaracion) {
-        ctx.fillStyle = "#000000";
-        ctx.font = "bold 20px sans-serif";
-        ctx.textAlign = "center";
-        ctx.fillText(pData.aclaracion.toUpperCase(), canvas.width / 2, 540);
-    }
+            // 5. ACLARACIÓN ("LLEVANDO 2 UNIDADES C/U")
+            if (pData.aclaracion) {
+                ctx.fillStyle = "#000000";
+                ctx.font = "bold 20px sans-serif";
+                ctx.textAlign = "center";
+                ctx.fillText(pData.aclaracion.toUpperCase(), canvas.width / 2, 500);
+            }
 
-    // 6. TÍTULO Y DESCRIPCIÓN
-    ctx.fillStyle = "#000000";
-    ctx.textAlign = "left";
+            // 6. TÍTULO Y DESCRIPCIÓN
+            ctx.fillStyle = "#000000";
+            ctx.textAlign = "left";
 
-    // Título del Producto
-    ctx.font = "bold 26px sans-serif";
-    ctx.fillText(pData.titulo, 75, 595);
+            // Título del Producto
+            ctx.font = "bold 26px sans-serif";
+            ctx.fillText(pData.titulo, 75, 550);
 
-    // Descripción del Producto
-    ctx.font = "20px sans-serif";
-    const palabras = pData.descripcion.split(" ");
-    let linea = "";
-    let y = 630;
-    const maxAnchoTexto = 300;
+            // Descripción del Producto
+            ctx.font = "20px sans-serif";
+            const palabras = pData.descripcion.split(" ");
+            let linea = "";
+            let y = 585;
+            const maxAnchoTexto = 300;
 
-    for (let n = 0; n < palabras.length; n++) {
-        let testLinea = linea + palabras[n] + " ";
-        let metrics = ctx.measureText(testLinea);
-        if (metrics.width > maxAnchoTexto && n > 0) {
+            for (let n = 0; n < palabras.length; n++) {
+                let testLinea = linea + palabras[n] + " ";
+                let metrics = ctx.measureText(testLinea);
+                if (metrics.width > maxAnchoTexto && n > 0) {
+                    ctx.fillText(linea, 75, y);
+                    linea = palabras[n] + " ";
+                    y += 26;
+                } else {
+                    linea = testLinea;
+                }
+            }
             ctx.fillText(linea, 75, y);
-            linea = palabras[n] + " ";
-            y += 26;
-        } else {
-            linea = testLinea;
+
+            // 7. CARTEL ROJO Y PRECIO
+            const posXCartel = 400; 
+            const anchoCartel = 320; 
+            const centroCartel = posXCartel + (anchoCartel / 2); // 560px
+            const precioFinal = Math.round(precioRegular * (1 - pctDescuento / 100));
+
+            // Recuadro de Precio Rojo
+            ctx.fillStyle = "#e11d48";
+            ctx.fillRect(posXCartel, 535, anchoCartel, 140);
+
+            // Precio Oferta ($ grande)
+            ctx.fillStyle = "#ffffff";
+            ctx.font = "bold 78px sans-serif";
+            ctx.textAlign = "center";
+            ctx.fillText("$" + precioFinal.toLocaleString('es-AR'), centroCartel, 635);
+
+            // Precio Regular
+            ctx.fillStyle = "#000000";
+            ctx.font = "bold 20px sans-serif";
+            ctx.textAlign = "center";
+            ctx.fillText("PRECIO REGULAR $" + precioRegular.toLocaleString('es-AR'), centroCartel, 710);
+
+            // 8. PIE DE PÁGINA (Ajustado exactamente en la franja amarilla inferior)
+            ctx.fillStyle = "#000000";
+            ctx.font = "bold 22px sans-serif";
+            ctx.textAlign = "center";
+
+            ctx.fillText("Abonando con QR desde el celular,", canvas.width / 2, 875);
+            ctx.fillText("EXCLUSIVO DINERO EN CUENTA.", canvas.width / 2, 902);
+            ctx.fillText("COMPRA MINIMA DE $15000", canvas.width / 2, 929);
+
+            return canvas.toDataURL('image/png');
         }
-    }
-    ctx.fillText(linea, 75, y);
-
-    // 7. CARTEL ROJO Y PRECIO
-    const posXCartel = 400; 
-    const anchoCartel = 320; 
-    const centroCartel = posXCartel + (anchoCartel / 2); // 560px
-    const precioFinal = Math.round(precioRegular * (1 - pctDescuento / 100));
-
-    // Recuadro de Precio Rojo
-    ctx.fillStyle = "#e11d48";
-    ctx.fillRect(posXCartel, 575, anchoCartel, 140);
-
-    // Precio Oferta ($ grande)
-    ctx.fillStyle = "#ffffff";
-    ctx.font = "bold 78px sans-serif";
-    ctx.textAlign = "center";
-    ctx.fillText("$" + precioFinal.toLocaleString('es-AR'), centroCartel, 675);
-
-    // Precio Regular (Dentro del borde del recuadro blanco)
-    ctx.fillStyle = "#000000";
-    ctx.font = "bold 20px sans-serif";
-    ctx.textAlign = "center";
-    ctx.fillText("PRECIO REGULAR $" + precioRegular.toLocaleString('es-AR'), centroCartel, 750);
-
-    // 8. PIE DE PÁGINA (Ajustado en posición vertical para el nuevo alto)
-    ctx.fillStyle = "#000000";
-
-    // Texto abonando QR
-    ctx.font = "bold 26x sans-serif";
-    ctx.textAlign = "center";
-    ctx.fillText("Abonando con QR desde el celular,", 360, 915);
-    ctx.fillText("EXCLUSIVO DINERO EN CUENTA.", 360, 940);
-    ctx.fillText("COMPRA MINIMA DE $15000", 360, 965);
-
-    // Compra mayor a $15000
-    //ctx.font = "bold 16px sans-serif";
-    //ctx.textAlign = "center";
-    //ctx.fillText("COMPRA", 360, 915);
-    //ctx.fillText("MAYOR A", 360, 937);
-    //ctx.fillText("$15000", 360, 959);
-
-    return canvas.toDataURL('image/png');
-}
-   
         
         async function generarTodasLasOfertas() {
             const previewGrid = document.getElementById('previewGrid');
