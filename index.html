@@ -260,13 +260,13 @@
 
             // Encabezado
             ctx.fillStyle = "#001a72";
-            ctx.font = "bold 42px sans-serif";
+            ctx.font = "bold 40px sans-serif";
             ctx.textAlign = "center";
             ctx.fillText("HOY JUEVES CON", canvas.width / 2, 65);
 
             // Logo MP
             if (imgMp) {
-                const w = 120, h = (imgMp.height / imgMp.width) * w;
+                const w = 110, h = (imgMp.height / imgMp.width) * w;
                 ctx.drawImage(imgMp, (canvas.width / 2) - (w / 2), 75, w, h);
             }
 
@@ -274,7 +274,7 @@
             ctx.fillStyle = "#ffffff";
             ctx.lineWidth = 4;
             ctx.strokeStyle = "#00a3e0";
-            const rx = 40, ry = 140, rw = 720, rh = 880, radius = 25;
+            const rx = 50, ry = 145, rw = 700, rh = 865, radius = 25;
             ctx.beginPath();
             ctx.roundRect(rx, ry, rw, rh, radius);
             ctx.fill();
@@ -282,98 +282,98 @@
 
             // Logo Carrefour
             if (imgCarrefour) {
-                const w = 160, h = (imgCarrefour.height / imgCarrefour.width) * w;
-                ctx.drawImage(imgCarrefour, 570, 155, w, h);
+                const w = 150, h = (imgCarrefour.height / imgCarrefour.width) * w;
+                ctx.drawImage(imgCarrefour, 580, 160, w, h);
             }
 
-            // 1. IMAGÉN DEL PRODUCTO (Agrandada al máximo posible)
+            // 1. IMAGEN DEL PRODUCTO (Agrandada para llenar el espacio central)
             if (imgProducto) {
-                const imgMaxW = 580; 
-                const imgMaxH = 480; 
+                const imgMaxW = 520; // Aumentado de 400 a 520
+                const imgMaxH = 430; // Aumentado de 360 a 430
                 let scale = Math.min(imgMaxW / imgProducto.width, imgMaxH / imgProducto.height);
                 let w = imgProducto.width * scale;
                 let h = imgProducto.height * scale;
-                ctx.drawImage(imgProducto, (canvas.width - w) / 2, 390 - (h / 2), w, h);
+                ctx.drawImage(imgProducto, (canvas.width - w) / 2, 380 - (h / 2), w, h);
             }
 
-            // --- SECCIÓN INFERIOR: TEXTO Y PRECIO ---
+            // --- SECCIÓN INFERIOR: TEXTO Y PRECIO EQUILIBRADOS ---
 
-            const posXCartel = 340; 
-            const anchoCartel = 380; 
-            const centroCartel = posXCartel + (anchoCartel / 2); // 530px
+            // Cartel Rojo de Precio (Desplazado un poco a la izquierda para cerrar la brecha)
+            const posXCartel = 370; // Movido de 400 a 370
+            const anchoCartel = 350; // Ampliado a 350
+            const centroCartel = posXCartel + (anchoCartel / 2); // 545px
 
-            // Aclaración
+            // Aclaración (Centrada sobre el cartel)
             if (pData.aclaracion) {
                 ctx.fillStyle = "#000000";
-                ctx.font = "bold 22px sans-serif";
+                ctx.font = "bold 20px sans-serif";
                 ctx.textAlign = "center";
-                ctx.fillText(pData.aclaracion.toUpperCase(), centroCartel, 625);
+                ctx.fillText(pData.aclaracion.toUpperCase(), centroCartel, 620);
             }
 
-            // TÍTULO Y DESCRIPCIÓN (Cerca del cartel)
+            // TÍTULO Y DESCRIPCIÓN (Ocupa hasta la posición 350)
             ctx.fillStyle = "#000000";
             ctx.textAlign = "left";
 
             // Título
-            ctx.font = "bold 34px sans-serif";
-            ctx.fillText(pData.titulo, 65, 675);
+            ctx.font = "bold 30px sans-serif"; // Tipografía más grande
+            ctx.fillText(pData.titulo, 80, 665);
 
             // Descripción
-            ctx.font = "25px sans-serif";
+            ctx.font = "22px sans-serif";
             const palabras = pData.descripcion.split(" ");
             let linea = "";
-            let y = 712;
-            const maxAnchoTexto = 260;
+            let y = 700;
+            const maxAnchoTexto = 260; // Ajustado para no solaparse con el cartel
 
             for (let n = 0; n < palabras.length; n++) {
                 let testLinea = linea + palabras[n] + " ";
                 let metrics = ctx.measureText(testLinea);
                 if (metrics.width > maxAnchoTexto && n > 0) {
-                    ctx.fillText(linea, 65, y);
+                    ctx.fillText(linea, 80, y);
                     linea = palabras[n] + " ";
-                    y += 32;
+                    y += 28;
                 } else {
                     linea = testLinea;
                 }
             }
-            ctx.fillText(linea, 65, y);
+            ctx.fillText(linea, 80, y);
 
             // Recuadro de Precio Rojo
             const precioFinal = Math.round(precioRegular * (1 - pctDescuento / 100));
             ctx.fillStyle = "#e11d48";
-            ctx.fillRect(posXCartel, 640, anchoCartel, 170);
+            ctx.fillRect(posXCartel, 640, anchoCartel, 160);
 
-            // Precio Oferta ($ gigante)
+            // Precio Oferta ($ grande)
             ctx.fillStyle = "#ffffff";
-            ctx.font = "bold 98px sans-serif";
+            ctx.font = "bold 90px sans-serif";
             ctx.textAlign = "center";
-            ctx.fillText("$" + precioFinal.toLocaleString('es-AR'), centroCartel, 760);
+            ctx.fillText("$" + precioFinal.toLocaleString('es-AR'), centroCartel, 752);
 
             // Precio Regular
             ctx.fillStyle = "#000000";
-            ctx.font = "bold 24px sans-serif";
+            ctx.font = "bold 22px sans-serif";
             ctx.textAlign = "center";
-            ctx.fillText("PRECIO REGULAR $" + precioRegular.toLocaleString('es-AR'), centroCartel, 845);
+            ctx.fillText("PRECIO REGULAR $" + precioRegular.toLocaleString('es-AR'), centroCartel, 835);
 
             // 4. PIE DE PÁGINA
             ctx.fillStyle = "#000000";
 
             // Texto abonando QR
-            ctx.font = "bold 19px sans-serif";
+            ctx.font = "bold 18px sans-serif";
             ctx.textAlign = "center";
-            ctx.fillText("Abonando con QR desde el celular,", 350, 1050);
-            ctx.fillText("exclusivo dinero en cuenta.", 350, 1075);
+            ctx.fillText("Abonando con QR desde el celular,", 360, 1045);
+            ctx.fillText("exclusivo dinero en cuenta.", 360, 1070);
 
             // Compra mayor a $15000
-            ctx.font = "bold 17px sans-serif";
+            ctx.font = "bold 16px sans-serif";
             ctx.textAlign = "right";
-            ctx.fillText("COMPRA", 750, 1035);
-            ctx.fillText("MAYOR A", 750, 1057);
-            ctx.fillText("$15000", 750, 1080);
+            ctx.fillText("COMPRA", 760, 1030);
+            ctx.fillText("MAYOR A", 760, 1052);
+            ctx.fillText("$15000", 760, 1074);
 
             return canvas.toDataURL('image/png');
         }
-
         async function generarTodasLasOfertas() {
             const previewGrid = document.getElementById('previewGrid');
             previewGrid.innerHTML = 'Generando afiches...';
