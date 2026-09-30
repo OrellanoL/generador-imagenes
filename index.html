@@ -204,7 +204,6 @@
             }
         ];
 
-        // Completar la lista hasta 30 elementos
         for (let i = productos.length + 1; i <= 30; i++) {
             productos.push({
                 id: i,
@@ -216,7 +215,6 @@
             });
         }
 
-        // Carga dinámica de inputs en pantalla
         window.addEventListener('DOMContentLoaded', () => {
             const contenedorInputs = document.getElementById('contenedorInputs');
             if (!contenedorInputs) return;
@@ -234,7 +232,6 @@
             });
         });
 
-        // Promesa para cargar imágenes sin bloqueos de CORS
         function cargarImagen(src) {
             return new Promise((resolve) => {
                 const img = new Image();
@@ -245,7 +242,6 @@
             });
         }
 
-        // Dibuja el afiche dinámico
         async function crearCartelDinámico(pData, precioRegular, pctDescuento) {
             const canvas = document.createElement('canvas');
             canvas.width = 800;
@@ -268,13 +264,13 @@
             ctx.textAlign = "center";
             ctx.fillText("HOY JUEVES CON", canvas.width / 2, 65);
 
-            // Logo Mercado Pago
+            // Logo MP
             if (imgMp) {
                 const w = 110, h = (imgMp.height / imgMp.width) * w;
                 ctx.drawImage(imgMp, (canvas.width / 2) - (w / 2), 75, w, h);
             }
 
-            // Recuadro Blanco Principal
+            // Recuadro Blanco
             ctx.fillStyle = "#ffffff";
             ctx.lineWidth = 4;
             ctx.strokeStyle = "#00a3e0";
@@ -284,7 +280,7 @@
             ctx.fill();
             ctx.stroke();
 
-            // Logo Carrefour Express
+            // Logo Carrefour
             if (imgCarrefour) {
                 const w = 150, h = (imgCarrefour.height / imgCarrefour.width) * w;
                 ctx.drawImage(imgCarrefour, 580, 160, w, h);
@@ -292,15 +288,17 @@
 
             // Imagen del Producto
             if (imgProducto) {
-                const imgMaxW = 420;
-                const imgMaxH = 380;
+                const imgMaxW = 400;
+                const imgMaxH = 360;
                 let scale = Math.min(imgMaxW / imgProducto.width, imgMaxH / imgProducto.height);
                 let w = imgProducto.width * scale;
                 let h = imgProducto.height * scale;
-                ctx.drawImage(imgProducto, (canvas.width - w) / 2, 340 - (h / 2), w, h);
+                ctx.drawImage(imgProducto, (canvas.width - w) / 2, 350 - (h / 2), w, h);
             }
 
-            // 1. Aclaración posicionada arriba del recuadro de precio
+            // --- POSICIONAMIENTO DE TEXTOS Y PRECIO ---
+
+            // 1. ACLARACIÓN: Ubicada sobre el recuadro del precio (Alineada a la derecha)
             if (pData.aclaracion) {
                 ctx.fillStyle = "#000000";
                 ctx.font = "bold 18px sans-serif";
@@ -308,17 +306,19 @@
                 ctx.fillText(pData.aclaracion.toUpperCase(), 720, 640);
             }
 
-            // 2. Título y Descripción posicionados a la izquierda
+            // 2. TÍTULO Y DESCRIPCIÓN: Ubicados a la izquierda (Al lado de la caja de precio)
             ctx.fillStyle = "#000000";
             ctx.textAlign = "left";
-            
-            ctx.font = "bold 28px sans-serif";
-            ctx.fillText(pData.titulo, 80, 710);
 
+            // Título
+            ctx.font = "bold 28px sans-serif";
+            ctx.fillText(pData.titulo, 80, 680);
+
+            // Descripción al costado del precio (con salto de línea si es largo)
             ctx.font = "bold 20px sans-serif";
             const palabras = pData.descripcion.split(" ");
             let linea = "";
-            let y = 745;
+            let y = 715;
             for (let n = 0; n < palabras.length; n++) {
                 let testLinea = linea + palabras[n] + " ";
                 let metrics = ctx.measureText(testLinea);
@@ -332,7 +332,7 @@
             }
             ctx.fillText(linea, 80, y);
 
-            // 3. Recuadro del Precio en Oferta
+            // 3. RECUADRO DE PRECIO: Lado derecho
             const precioFinal = Math.round(precioRegular * (1 - pctDescuento / 100));
             ctx.fillStyle = "#e11d48";
             ctx.fillRect(400, 660, 320, 140);
@@ -348,7 +348,7 @@
             ctx.textAlign = "center";
             ctx.fillText("PRECIO REGULAR $" + precioRegular.toLocaleString('es-AR'), 560, 840);
 
-            // Pie de página / Legales
+            // Pie de página
             ctx.fillStyle = "#000000";
             ctx.font = "bold 16px sans-serif";
             ctx.textAlign = "center";
@@ -358,7 +358,6 @@
             return canvas.toDataURL('image/png');
         }
 
-        // Generar todas las imágenes en pantalla
         async function generarTodasLasOfertas() {
             const previewGrid = document.getElementById('previewGrid');
             previewGrid.innerHTML = 'Generando afiches...';
