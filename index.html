@@ -306,32 +306,33 @@
                 ctx.fillText(pData.aclaracion.toUpperCase(), 560, 640);
             }
 
-           // 2. TÍTULO Y DESCRIPCIÓN: Ubicados a la izquierda
-                ctx.fillStyle = "#000000";
-                ctx.textAlign = "left";
-                
-                // Título
-                ctx.font = "bold 28px sans-serif";
-                ctx.fillText(pData.titulo, 80, 680);
-                
-                // Descripción al costado del precio
-                ctx.font = "bold 20px sans-serif";
-                const palabras = pData.descripcion.split(" ");
-                let linea = "";
-                let y = 715; // <-- CAMBIÁ 700 POR 715 PARA SUBIR LA DESCRIPCIÓN
-                for (let n = 0; n < palabras.length; n++) {
-                    let testLinea = linea + palabras[n] + " ";
-                    let metrics = ctx.measureText(testLinea);
-                    if (metrics.width > 300 && n > 0) {
-                        ctx.fillText(linea, 80, y);
-                        linea = palabras[n] + " ";
-                        y += 28;
-                    } else {
-                        linea = testLinea;
-                    }
-                }
-                ctx.fillText(linea, 80, y);
+           // 2. TÍTULO Y DESCRIPCIÓN: Estilo folleto compacto
+            ctx.fillStyle = "#000000";
+            ctx.textAlign = "left";
 
+            // Título
+            ctx.font = "bold 20px sans-serif"; // Letra más chica y definida
+            ctx.fillText(pData.titulo, 80, 680);
+
+            // Descripción
+            ctx.font = "15px sans-serif"; // Estilo limpio tipo catálogo
+            const palabras = pData.descripcion.split(" ");
+            let linea = "";
+            let y = 702; // Ubicación pegada al título
+            for (let n = 0; n < palabras.length; n++) {
+                let testLinea = linea + palabras[n] + " ";
+                let metrics = ctx.measureText(testLinea);
+                if (metrics.width > 290 && n > 0) {
+                    ctx.fillText(linea, 80, y);
+                    linea = palabras[n] + " ";
+                    y += 20; // Interlineado más ajustado
+                } else {
+                    linea = testLinea;
+                }
+            }
+            ctx.fillText(linea, 80, y);
+
+            
             // 3. RECUADRO DE PRECIO: Lado derecho
             const precioFinal = Math.round(precioRegular * (1 - pctDescuento / 100));
             ctx.fillStyle = "#e11d48";
