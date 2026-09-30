@@ -1,12 +1,182 @@
-<script>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de Ofertas Masivo</title>
+    <style>
+        :root {
+            --bg-gray: #f4f4f5;
+            --border-color: #e4e4e7;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-gray);
+            padding: 20px;
+            color: #18181b;
+        }
+
+        .card {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: #71717a;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+        }
+
+        .controls-row {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 20px;
+            background: #f8fafc;
+            padding: 16px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .field-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        label {
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        input {
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 0.95rem;
+        }
+
+        .grid-inputs {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .item-input-card {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            background: #fff;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+        }
+
+        .buttons-row {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        button {
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            font-size: 0.95rem;
+        }
+
+        .btn-calc {
+            background: #000;
+            color: white;
+        }
+
+        .btn-print {
+            background: #e4e4e7;
+            color: #18181b;
+        }
+
+        .preview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .preview-grid img {
+            width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+
+        @media print {
+            .no-print { display: none !important; }
+            body { padding: 0; background: white; }
+            @page { size: A4 portrait; margin: 0; }
+            .preview-grid { display: block; }
+            .preview-grid img {
+                page-break-after: always;
+                width: 100vw;
+                height: 100vh;
+                object-fit: contain;
+                border: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card no-print">
+        <h1>🏷️ Generador Masivo de Ofertas</h1>
+        <p class="subtitle">Completá los datos y precios para generar los carteles automáticamente.</p>
+
+        <div class="controls-row">
+            <div class="field-group">
+                <label>Descuento (%):</label>
+                <input type="number" id="descuentoInput" value="10" style="width: 100px;">
+            </div>
+        </div>
+
+        <label style="margin-bottom: 8px; display: block;">Listado de Productos:</label>
+        <div class="grid-inputs" id="contenedorInputs"></div>
+
+        <div class="buttons-row">
+            <button class="btn-calc" onclick="generarTodasLasOfertas()">⚡ Generar Ofertas</button>
+            <button class="btn-print" onclick="window.print()">🖨️ Imprimir / PDF</button>
+        </div>
+
+        <div class="preview-grid" id="previewGrid"></div>
+    </div>
+
+    <script>
         const USUARIO_GITHUB = "OrellanoL";
         const REPOSITORIO_GITHUB = "generador-imagenes";
 
-        // Rutas directas de los logos
         const URL_MP_LOGO = `https://raw.githubusercontent.com/${USUARIO_GITHUB}/${REPOSITORIO_GITHUB}/main/mplogo.png`;
         const URL_CARREFOUR_LOGO = `https://raw.githubusercontent.com/${USUARIO_GITHUB}/${REPOSITORIO_GITHUB}/main/carrefourexpresslogo.webp`;
 
-        // Productos configurados
         const productos = [
             {
                 id: 1,
@@ -34,7 +204,7 @@
             }
         ];
 
-        // Completar la lista hasta 30 de ser necesario
+        // Completar la lista
         for (let i = productos.length + 1; i <= 30; i++) {
             productos.push({
                 id: i,
@@ -46,21 +216,24 @@
             });
         }
 
-        // Crear formulario para la carga de datos
-        const contenedorInputs = document.getElementById('contenedorInputs');
-        productos.forEach((p, index) => {
-            contenedorInputs.innerHTML += `
-                <div class="item-input-card">
-                    <strong>Item ${p.id}</strong>
-                    <input type="text" id="titulo_${index}" value="${p.titulo}" placeholder="Título">
-                    <input type="text" id="desc_${index}" value="${p.descripcion}" placeholder="Descripción">
-                    <input type="text" id="aclara_${index}" value="${p.aclaracion}" placeholder="Aclaración">
-                    <input type="number" id="price_${index}" value="${p.precioDefault}" placeholder="Precio Regular">
-                </div>
-            `;
+        // Ejecutar cuando el DOM esté listo para evitar errores de 'null'
+        document.addEventListener('DOMContentLoaded', () => {
+            const contenedorInputs = document.getElementById('contenedorInputs');
+            if (!contenedorInputs) return;
+
+            productos.forEach((p, index) => {
+                contenedorInputs.innerHTML += `
+                    <div class="item-input-card">
+                        <strong>Item ${p.id}</strong>
+                        <input type="text" id="titulo_${index}" value="${p.titulo}" placeholder="Título">
+                        <input type="text" id="desc_${index}" value="${p.descripcion}" placeholder="Descripción">
+                        <input type="text" id="aclara_${index}" value="${p.aclaracion}" placeholder="Aclaración">
+                        <input type="number" id="price_${index}" value="${p.precioDefault}" placeholder="Precio Regular">
+                    </div>
+                `;
+            });
         });
 
-        // Cargar imagen con promesa de forma segura
         function cargarImagen(src) {
             return new Promise((resolve) => {
                 const img = new Image();
@@ -71,37 +244,35 @@
             });
         }
 
-        // Generar plantilla completa en Canvas
         async function crearCartelDinámico(pData, precioRegular, pctDescuento) {
             const canvas = document.createElement('canvas');
             canvas.width = 800;
             canvas.height = 1131;
             const ctx = canvas.getContext('2d');
 
-            // 1. Cargar todas las imágenes requeridas en paralelo
             const [imgProducto, imgMp, imgCarrefour] = await Promise.all([
                 cargarImagen(pData.fotoUrl),
                 cargarImagen(URL_MP_LOGO),
                 cargarImagen(URL_CARREFOUR_LOGO)
             ]);
 
-            // 2. Fondo Amarillo Base
+            // Fondo Amarillo
             ctx.fillStyle = "#ffe600";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // 3. Encabezado Textos
+            // Encabezado
             ctx.fillStyle = "#001a72";
             ctx.font = "bold 40px sans-serif";
             ctx.textAlign = "center";
             ctx.fillText("HOY JUEVES CON", canvas.width / 2, 65);
 
-            // 4. Logo Mercado Pago (Si cargó correctamente)
+            // Logo MP
             if (imgMp) {
                 const w = 110, h = (imgMp.height / imgMp.width) * w;
                 ctx.drawImage(imgMp, (canvas.width / 2) - (w / 2), 75, w, h);
             }
 
-            // 5. Recuadro Blanco Principal
+            // Recuadro Blanco
             ctx.fillStyle = "#ffffff";
             ctx.lineWidth = 4;
             ctx.strokeStyle = "#00a3e0";
@@ -111,13 +282,13 @@
             ctx.fill();
             ctx.stroke();
 
-            // 6. Logo Carrefour Express (Esquina superior derecha dentro de marco blanco)
+            // Logo Carrefour
             if (imgCarrefour) {
                 const w = 150, h = (imgCarrefour.height / imgCarrefour.width) * w;
                 ctx.drawImage(imgCarrefour, 580, 160, w, h);
             }
 
-            // 7. Dibujar Foto del Producto
+            // Producto
             if (imgProducto) {
                 const imgMaxW = 380;
                 const imgMaxH = 360;
@@ -127,7 +298,7 @@
                 ctx.drawImage(imgProducto, (canvas.width - w) / 2, 350 - (h / 2), w, h);
             }
 
-            // 8. Textos del Producto
+            // Textos
             if (pData.aclaracion) {
                 ctx.fillStyle = "#000000";
                 ctx.font = "bold 18px sans-serif";
@@ -143,24 +314,22 @@
             ctx.font = "bold 22px sans-serif";
             ctx.fillText(pData.descripcion, 90, 635);
 
-            // 9. Recuadro Rojo de Precio
+            // Recuadro Precio
             const precioFinal = Math.round(precioRegular * (1 - pctDescuento / 100));
             ctx.fillStyle = "#e11d48";
             ctx.fillRect(400, 660, 320, 140);
 
-            // Precio Oferta en Blanco
             ctx.fillStyle = "#ffffff";
             ctx.font = "bold 72px sans-serif";
             ctx.textAlign = "center";
             ctx.fillText("$" + precioFinal.toLocaleString('es-AR'), 560, 760);
 
-            // Precio Regular Abajo
             ctx.fillStyle = "#000000";
             ctx.font = "bold 22px sans-serif";
             ctx.textAlign = "center";
             ctx.fillText("PRECIO REGULAR $" + precioRegular.toLocaleString('es-AR'), 560, 840);
 
-            // 10. Legales / Pie
+            // Pie
             ctx.fillStyle = "#000000";
             ctx.font = "bold 16px sans-serif";
             ctx.textAlign = "center";
@@ -199,3 +368,5 @@
             previewGrid.appendChild(fragment);
         }
     </script>
+</body>
+</html>
