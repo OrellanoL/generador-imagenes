@@ -301,61 +301,69 @@
             // 1. ACLARACIÓN: Centrada justo sobre el recuadro de precio
             if (pData.aclaracion) {
                 ctx.fillStyle = "#000000";
-                ctx.font = "bold 16px sans-serif";
+                ctx.font = "bold 18px sans-serif";
                 ctx.textAlign = "center";
-                ctx.fillText(pData.aclaracion.toUpperCase(), 560, 640);
+                ctx.fillText(pData.aclaracion.toUpperCase(), 560, 625);
             }
 
-           // 2. TÍTULO Y DESCRIPCIÓN: Estilo folleto compacto
+            // 2. TÍTULO Y DESCRIPCIÓN: A la izquierda al costado del cartel rojo
             ctx.fillStyle = "#000000";
             ctx.textAlign = "left";
 
-            // Título
-            ctx.font = "bold 20px sans-serif"; // Letra más chica y definida
-            ctx.fillText(pData.titulo, 80, 680);
+            // Título (EN NEGRITA)
+            ctx.font = "bold 26px sans-serif";
+            ctx.fillText(pData.titulo, 80, 670);
 
-            // Descripción
-            ctx.font = "15px sans-serif"; // Estilo limpio tipo catálogo
+            // Descripción (SIN NEGRITA)
+            ctx.font = "22px sans-serif";
             const palabras = pData.descripcion.split(" ");
             let linea = "";
-            let y = 702; // Ubicación pegada al título
+            let y = 702;
             for (let n = 0; n < palabras.length; n++) {
                 let testLinea = linea + palabras[n] + " ";
                 let metrics = ctx.measureText(testLinea);
-                if (metrics.width > 290 && n > 0) {
+                if (metrics.width > 280 && n > 0) {
                     ctx.fillText(linea, 80, y);
                     linea = palabras[n] + " ";
-                    y += 20; // Interlineado más ajustado
+                    y += 28;
                 } else {
                     linea = testLinea;
                 }
             }
             ctx.fillText(linea, 80, y);
 
-            
             // 3. RECUADRO DE PRECIO: Lado derecho
             const precioFinal = Math.round(precioRegular * (1 - pctDescuento / 100));
             ctx.fillStyle = "#e11d48";
-            ctx.fillRect(400, 660, 320, 140);
+            ctx.fillRect(400, 640, 320, 160);
 
             // Precio Oferta Agrandado (85px)
             ctx.fillStyle = "#ffffff";
             ctx.font = "bold 85px sans-serif";
             ctx.textAlign = "center";
-            ctx.fillText("$" + precioFinal.toLocaleString('es-AR'), 560, 762);
+            ctx.fillText("$" + precioFinal.toLocaleString('es-AR'), 560, 750);
 
             // Precio Regular debajo del recuadro
             ctx.fillStyle = "#000000";
             ctx.font = "bold 22px sans-serif";
             ctx.textAlign = "center";
-            ctx.fillText("PRECIO REGULAR $" + precioRegular.toLocaleString('es-AR'), 560, 840);
+            ctx.fillText("PRECIO REGULAR $" + precioRegular.toLocaleString('es-AR'), 560, 835);
 
-            // Pie de página
+            // 4. PIE DE PÁGINA
             ctx.fillStyle = "#000000";
-            ctx.font = "bold 16px sans-serif";
+
+            // Texto abonando QR
+            ctx.font = "bold 18px sans-serif";
             ctx.textAlign = "center";
-            ctx.fillText("Abonando con QR desde el celular, exclusivo dinero en cuenta.", canvas.width / 2, 1040);
-            ctx.fillText("COMPRA MAYOR A $15000", canvas.width / 2, 1065);
+            ctx.fillText("Abonando con QR desde el celular,", 360, 1045);
+            ctx.fillText("exclusivo dinero en cuenta.", 360, 1070);
+
+            // Compra mayor a $15000 a la derecha
+            ctx.font = "bold 16px sans-serif";
+            ctx.textAlign = "right";
+            ctx.fillText("COMPRA", 760, 1030);
+            ctx.fillText("MAYOR A", 760, 1052);
+            ctx.fillText("$15000", 760, 1074);
 
             return canvas.toDataURL('image/png');
         }
