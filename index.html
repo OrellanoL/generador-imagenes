@@ -281,11 +281,12 @@
     ctx.stroke();
 
     // Logo Carrefour (Achicado y alineado correctamente a la derecha sin cortarse)
+    // Logo Carrefour (Corregido: más pequeño y desplazado a la derecha)
     if (imgCarrefour) {
-        const w = 125; 
+        const w = 90; // Ancho más pequeño para que no pise la imagen del producto
         const h = (imgCarrefour.height / imgCarrefour.width) * w;
-        const posX = 710 - w; // Alineado al borde interno derecho
-        ctx.drawImage(imgCarrefour, posX, 160, w, h);
+        const posX = 630; // Posición bien a la derecha dentro del recuadro
+        ctx.drawImage(imgCarrefour, posX, 165, w, h);
     }
 
     // 4. IMAGEN DEL PRODUCTO (Reescalada para dar espacio abajo)
